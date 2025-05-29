@@ -22,30 +22,6 @@ async def root():
 @app.post("/upload")
 async def upload_excel(files: List[UploadFile] = File(...)):
     results = []
-    for file in files:
-        # Verifica se é Excel
-        if not file.filename.endswith(('.xlsx', '.xls')):
-            results.append({"filename": file.filename, "error": "Não é arquivo Excel"})
-            continue
-        
-        try:
-            # Lê o arquivo
-            contents = await file.read()
-            df = pd.read_excel(BytesIO(contents))
-            
-            # Limpa NaN e converte para dict
-            df = df.fillna('')
-            data = df.to_dict('records')
-            
-            results.append({"filename": file.filename, "data": data})
-        except Exception as e:
-            results.append({"filename": file.filename, "error": str(e)})
-    
-    return {"results": results}
-
-@app.post("/uploadtest")
-async def upload_excel(files: List[UploadFile] = File(...)):
-    results = []
     linhas_para_pular_leitura = [0, 1, 2, 3, 4, 5, 12, 17, 20, 21, 22, *range(23, 45)]
     cols_leitura= list(range(0, 14))
 
