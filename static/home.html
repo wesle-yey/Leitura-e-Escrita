@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Excel</title>
+</head>
+<body>
+    <h1>Upload Excel</h1>
+    <form id="form" enctype="multipart/form-data">
+        <input type="file" name="files" accept=".xlsx,.xls" multiple required>
+        <button type="submit">Enviar</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const files = e.target.files.files;
+            
+            for (let file of files) {
+                formData.append('files', file);
+            }
+            
+            try {
+                const response = await fetch('/uploadtest', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                let html = '';
+                if (response.ok) {
+                    result.results.forEach(item => {
+                        html += `<h3>${item.filename}</h3>`;
+                        html += `<h4>${item.tipo}</h4>`;
+                        if (item.error) {
+                            html += `<p style="color:red">Erro: ${item.error}</p>`;
+                        } else {
+                            html += `<pre>${JSON.stringify(item.data, null, 2)}</pre>`;
+                        }
+                    });
+                } else {
+                    html = `Erro: ${result.detail}`;
+                }
+                
+                document.getElementById('result').innerHTML = html;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `Erro: ${error.message}`;
+            }
+        };
+    </script>
+</body>
+</html>
