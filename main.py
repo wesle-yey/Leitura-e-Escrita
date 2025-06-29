@@ -25,7 +25,8 @@ async def upload_excel(files: List[UploadFile] = File(...)):
         if not file.filename.endswith(('.xlsx', '.xls')):
             return {"error": f"Envie apenas arquivos excel (xlsx ou xls): {str(e)}"}
     try:
-        results = await op.gerar_tabela(files)
+        results = await op.gerar_tabela_do_polo(files)
+        
         return {"results": results}
     except Exception as e:
         return {"error": f"Erro no processamento: {str(e)}"}
